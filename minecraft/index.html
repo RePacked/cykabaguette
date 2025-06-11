@@ -85,21 +85,28 @@
 
   <script>
     async function loadStatus() {
-      const response = await fetch("https://api.mcsrvstat.us/2/mc.cykabaguette.com");
-      const data = await response.json();
+      try {
+        const response = await fetch("https://api.mcsrvstat.us/2/mc.cykabaguette.com?no_cache=" + Date.now());
+        const data = await response.json();
 
-      const statusDiv = document.getElementById('status');
-      const motdDiv = document.getElementById('motd');
-      const playersDiv = document.getElementById('players');
+        const statusDiv = document.getElementById('status');
+        const motdDiv = document.getElementById('motd');
+        const playersDiv = document.getElementById('players');
 
-      if (data.online) {
-        statusDiv.innerHTML = '<span class="online">🟢 Online</span>';
-        motdDiv.innerHTML = data.motd.clean.join('\n');
-        playersDiv.innerHTML = `${data.players.online} / ${data.players.max} players online`;
-      } else {
-        statusDiv.innerHTML = '<span class="offline">🔴 Offline</span>';
-        motdDiv.innerHTML = '';
-        playersDiv.innerHTML = '';
+        if (data.online && data.players && typeof data.players.online === 'number') {
+          statusDiv.innerHTML = '<span class="online">🟢 Online</span>';
+          motdDiv.innerHTML = (data.motd?.clean || []).join('\n');
+          playersDiv.innerHTML = `${data.players.online} / ${data.players.max} players online`;
+        } else {
+          statusDiv.innerHTML = '<span class="offline">🔴 Offline</span>';
+          motdDiv.innerHTML = '';
+          playersDiv.innerHTML = '';
+        }
+
+        console.log('[DEBUG] Server data:', data); // For debugging
+      } catch (error) {
+        console.error('[ERROR] Failed to fetch server status:', error);
+        document.getElementById('status').innerHTML = '<span class="offline">🔴 Offline (Error)</span>';
       }
     }
 
