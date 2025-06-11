@@ -76,7 +76,7 @@
 </head>
 <body>
   <div class="card">
-    <h1>mc.cykabaguette.com</h1>
+    <h1>Cyka Baguette</h1>
     <div class="ip">mc.cykabaguette.com</div>
     <div id="status" class="status">Loading server status...</div>
     <div id="motd" class="motd"></div>
@@ -95,7 +95,7 @@
       if (data.online) {
         statusDiv.innerHTML = '<span class="online">🟢 Online</span>';
         motdDiv.innerHTML = data.motd.clean.join('\n');
-        playersDiv.innerHTML = `👥 ${data.players.online} / ${data.players.max} players online`;
+        playersDiv.innerHTML = `${data.players.online} / ${data.players.max} players online`;
       } else {
         statusDiv.innerHTML = '<span class="offline">🔴 Offline</span>';
         motdDiv.innerHTML = '';
