@@ -10,7 +10,10 @@
     body {
       margin: 0;
       padding: 0;
-      background: url('https://wallpapercave.com/wp/wp2757874.png') center center / cover no-repeat fixed;
+      background-image: url('https://static.planetminecraft.com/files/image/minecraft/texture-pack/2020/422/13738812-dirt_xl.webp');
+      background-repeat: repeat;
+      background-size: 128px 128px; /* schaalt afbeelding tot kleinere tegels */
+      background-color: #000;
       font-family: 'Press Start 2P', monospace;
       color: #fff;
       display: flex;
@@ -61,6 +64,10 @@
       color: #ff5555;
     }
 
+    .standby {
+      color: #ffaa00;
+    }
+
     .motd {
       margin: 20px 0;
       font-size: 12px;
@@ -93,20 +100,31 @@
         const motdDiv = document.getElementById('motd');
         const playersDiv = document.getElementById('players');
 
-        if (data.online && data.players && typeof data.players.online === 'number') {
-          statusDiv.innerHTML = '<span class="online">🟢 Online</span>';
-          motdDiv.innerHTML = (data.motd?.clean || []).join('\n');
-          playersDiv.innerHTML = `${data.players.online} / ${data.players.max} players online`;
-        } else {
-          statusDiv.innerHTML = '<span class="offline">🔴 Offline</span>';
+        const motdText = (data.motd?.clean || []).join('\n').trim();
+
+        if (!data.online) {
+          // Server is volledig offline
+          statusDiv.innerHTML = '<span class="offline">Offline</span>';
           motdDiv.innerHTML = '';
           playersDiv.innerHTML = '';
+        } else if (motdText.toLowerCase().includes('this server is offline')) {
+          // Server is in standby (slaapmodus)
+          statusDiv.innerHTML = '<span class="standby">Standby (join to start)</span>';
+          motdDiv.innerHTML = '';
+          playersDiv.innerHTML = '';
+        } else {
+          // Server is echt online
+          statusDiv.innerHTML = '<span class="online">Online</span>';
+          motdDiv.innerHTML = motdText;
+          playersDiv.innerHTML = `${data.players.online} / ${data.players.max} players online`;
         }
 
-        console.log('[DEBUG] Server data:', data); // For debugging
+        console.log('[DEBUG] Server data:', data);
       } catch (error) {
         console.error('[ERROR] Failed to fetch server status:', error);
-        document.getElementById('status').innerHTML = '<span class="offline">🔴 Offline (Error)</span>';
+        document.getElementById('status').innerHTML = '<span class="offline">Offline (error)</span>';
+        document.getElementById('motd').innerHTML = '';
+        document.getElementById('players').innerHTML = '';
       }
     }
 
