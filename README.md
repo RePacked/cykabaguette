@@ -1,3 +1,0 @@
-# cykabaguette
-
-test
